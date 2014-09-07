@@ -46,36 +46,34 @@ def sleep_until_tomorrow():
 def timedelta_to_string(td):
   """ Takes a timedelta object and returns a days, hours, minutes string. """
   num_seconds = td.total_seconds()
-  td_string = ""
   days = int(num_seconds / (24*60*60))
-  if days > 1:
-    # days plural
-    td_string += str(days) + " days, "
-  elif days > 0:
-    # day singular
-    td_string += "1 day, "
   hours = int((num_seconds / (60*60)) % 24)
-  if hours > 1:
-    # hours plural
-    td_string += str(hours) + " hours, "
-  elif hours > 0:
-    # hours singular
-    td_string += "1 hour, "
   minutes = int((num_seconds / 60) % 60)
-  if int(num_seconds / 60) > minutes:
-    # insert an and if there are days or hours
-    td_string += "and "
+  td_phrase = []
+  # build list of days, minutes, and hours
+  if days > 0:
+    td_phrase.append(str(days) + " day")
+  if days > 1:
+    td_phrase[-1] += "s"
+  if hours > 0:
+    td_phrase.append(str(hours) + " hour")
+  if hours > 1:
+    td_phrase[-1] += "s"
+  if minutes > 0:
+    td_phrase.append(str(minutes) + " minute")
   if minutes > 1:
-    # minutes plural
-    td_string += str(minutes) + " minutes"
-  elif minutes > 0:
-    # minutes singular
-    td_string += "1 minute"
-  if DEBUG:
-    print(num_seconds)
-    print(days)
-    print(hours)
-    print(minutes)
+    td_phrase[-1] += "s"
+  # insert and, and commas where necessary
+  if len(td_phrase) > 2:
+    td_phrase[1:1] = ", "
+  if len(td_phrase) > 1:
+    td_phrase[-1:-1] = " and "
+  # handle the case where days, hours, and minutes are all 0
+  if len(td_phrase) == 0:
+    td_phrase.append("0 minutes")
+  td_string = ""
+  for word in td_phrase:
+    td_string += word
   return td_string
     
 
