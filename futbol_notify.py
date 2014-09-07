@@ -76,13 +76,13 @@ def log(message=""):
   program_name = re.split(r"/",sys.argv[0])[-1]
   logfile_name = program_name.replace(".py",".log")
   path_to_logfile = sys.argv[0].replace(program_name, logfile_name)
-  # 
+  # Write message to log file. 
   try:
     logfile = open(path_to_logfile, 'a')
-    logfile.write(message + "\n")
+    logfile.write(str(message) + "\n")
     logfile.close()
   except:
-    exit("Unable to write to log file:" + path_to_logfile)
+    exit("Unable to write to log file: " + path_to_logfile)
 
 
 ################################################################################
