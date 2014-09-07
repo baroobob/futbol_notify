@@ -22,11 +22,6 @@ USER_TIMEZONE = 'US/Arizona'
 WATCHESPN_TIMEZONE = 'US/Eastern'
 
 
-DEBUG = False
-if len(sys.argv) > 1 and sys.argv[1] == 'debug':
-  DEBUG = True
-
-
 ################################################################################
 # Functions & Procedures                                                       #
 ################################################################################
@@ -35,11 +30,8 @@ def sleep_until_tomorrow():
   """ Sleeps until tomorrow at 12 am EDT. """
   now = datetime.now(timezone(WATCHESPN_TIMEZONE))
   tomorrow = (now + timedelta(days=1)).replace(hour=0, minute=0)
-  if DEBUG:
-    print(now)
-    print(tomorrow)
   nap_duration = tomorrow - now
-  print("Napping for " + timedelta_to_string(nap_duration) + ".")
+  log("Napping for " + timedelta_to_string(nap_duration) + ".")
   time.sleep(nap_duration.total_seconds())    
 
 
@@ -77,6 +69,22 @@ def timedelta_to_string(td):
   return td_string
     
 
+def log(message=""):
+  """ Appends messages to log file. """
+  # The log file name is made by replacing .py with .log and the log file is
+  # placed in the same directory as the python file.
+  program_name = re.split(r"/",sys.argv[0])[-1]
+  logfile_name = program_name.replace(".py",".log")
+  path_to_logfile = sys.argv[0].replace(program_name, logfile_name)
+  # 
+  try:
+    logfile = open(path_to_logfile, 'a')
+    logfile.write(message + "\n")
+    logfile.close()
+  except:
+    exit("Unable to write to log file:" + path_to_logfile)
+
+
 ################################################################################
 # Main program                                                                 #
 ################################################################################
@@ -91,9 +99,9 @@ if __name__ == "__main__":
 
   while True:
   
-    # print the current date and time for the server log
-    print()
-    print(datetime.now(timezone(USER_TIMEZONE)))
+    # record the current date and time for the server log
+    log()
+    log(datetime.now(timezone(USER_TIMEZONE)))
     
     # go get today's list of upcoming events at watchespn
     todays_date = datetime.now(timezone(WATCHESPN_TIMEZONE))
@@ -111,13 +119,13 @@ if __name__ == "__main__":
       date = re.sub(leading_zero, "", todays_date.strftime("%d"))
       subject = "Soccer games for " + weekday + ", " + month + " " + date
       email_result = mailServer.send_mail(FROM_ADDRESS, TO_ADDRESS, subject, message)
-      print(email_result)
+      log(email_result)
       if "Emailed" in email_result:
         break
       else:
         # if mail wasn't sent, try again soon
         nap_duration = timedelta(minutes=5)
-        print("Napping for " + timedelta_to_string(nap_duration) + ".")
+        log("Napping for " + timedelta_to_string(nap_duration) + ".")
         time.sleep(nap_duration.total_seconds())    
   
     # sleep until tomorrow
