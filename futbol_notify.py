@@ -18,7 +18,8 @@ USER_NAME = 'jimbos.notifications'
 PASSWORD_FILE = 'gmailpw'
 FROM_ADDRESS = 'jimbos.notifications@gmail.com'
 TO_ADDRESS = 'jwbwater@gmail.com'
-USER_TIMEZONE = 'US/Arizona'
+#USER_TIMEZONE = 'US/Arizona'
+USER_TIMEZONE = 'America/Phoenix'
 WATCHESPN_TIMEZONE = 'US/Eastern'
 
 
@@ -74,7 +75,8 @@ def log(message=""):
   # The log file name is made by replacing .py with .log and the log file is
   # placed in the same directory as the python file.
   program_name = re.split(r"/",sys.argv[0])[-1]
-  logfile_name = program_name.replace(".py",".log")
+  logfile_name = program_name.replace(".py","")
+  logfile_name += ".log"
   path_to_logfile = sys.argv[0].replace(program_name, logfile_name)
   # Write message to log file. 
   try:
@@ -92,7 +94,9 @@ def log(message=""):
 if __name__ == "__main__":
 
   # setup mail server
-  mailServer = smtpServer(SMTP_SERVER, USER_NAME, PASSWORD_FILE) 
+  program_name = re.split(r"/",sys.argv[0])[-1]
+  path_to_password_file = sys.argv[0].replace(program_name, PASSWORD_FILE)
+  mailServer = smtpServer(SMTP_SERVER, USER_NAME, path_to_password_file)
 
   # setup regular expression to strip leading zero from day of the month
   leading_zero = re.compile(r"^0")
