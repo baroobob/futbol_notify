@@ -11,17 +11,20 @@ from datetime import datetime, timedelta
 from pytz import timezone
 from watch_espn import get_upcoming_events
 from send_mail import smtpServer
+from push_notification import pushoverApp
 
 # Constants
+PUSHOVER_APP_TOKEN = "auUec9JTmPxgppGhEzZ3Tcq2iqfCUN"
 SMTP_SERVER = 'smtp.gmail.com:587'
 USER_NAME = 'jimbos.notifications'
 PASSWORD_FILE = 'gmailpw'
 FROM_ADDRESS = 'jimbos.notifications@gmail.com'
-TO_ADDRESS = 'jwbwater@gmail.com'
-#USER_TIMEZONE = 'US/Arizona'
-USER_TIMEZONE = 'America/Phoenix'
 WATCHESPN_TIMEZONE = 'US/Eastern'
 
+# User constants, will come from a database for a multiuser model
+USER_TIMEZONE = 'America/Phoenix'
+USER_EMAIL_ADDRESS = 'jwbwater@gmail.com'
+PUSHOVER_USER_KEY = "uHvcDKd7sbqgpdRXdHqfs1KyzTiBpF"
 
 ################################################################################
 # Functions & Procedures                                                       #
@@ -97,6 +100,7 @@ if __name__ == "__main__":
   program_name = re.split(r"/",sys.argv[0])[-1]
   path_to_password_file = sys.argv[0].replace(program_name, PASSWORD_FILE)
   mailServer = smtpServer(SMTP_SERVER, USER_NAME, path_to_password_file)
+  notificationServer = pushoverApp(PUSHOVER_APP_TOKEN)
 
   # setup regular expression to strip leading zero from day of the month
   leading_zero = re.compile(r"^0")
@@ -122,9 +126,14 @@ if __name__ == "__main__":
       month = todays_date.strftime("%B")
       date = re.sub(leading_zero, "", todays_date.strftime("%d"))
       subject = "Soccer games for " + weekday + ", " + month + " " + date
-      email_result = mailServer.send_mail(FROM_ADDRESS, TO_ADDRESS, subject, message)
-      log(email_result)
-      if "Emailed" in email_result:
+      #email_result = mailServer.send_mail(FROM_ADDRESS, USER_EMAIL_ADDRESS,
+      #  subject, message)
+      #log(email_result)
+      notification_result = notificationServer.send_notification(
+        PUSHOVER_USER_KEY, subject + "\n" + message)
+      log(notification_result)
+      #if "Emailed" in email_result:
+      if "Pushed" in notification_result:
         break
       else:
         # if mail wasn't sent, try again soon
