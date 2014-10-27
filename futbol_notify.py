@@ -14,17 +14,15 @@ from send_mail import smtpServer
 from push_notification import pushoverApp
 
 # Constants
-PUSHOVER_APP_TOKEN = "auUec9JTmPxgppGhEzZ3Tcq2iqfCUN"
+PUSHOVER_APP_TOKEN = ""
 SMTP_SERVER = 'smtp.gmail.com:587'
-USER_NAME = 'jimbos.notifications'
-PASSWORD_FILE = 'gmailpw'
-FROM_ADDRESS = 'jimbos.notifications@gmail.com'
+CREDENTIALS_FILE = 'gmail_credentials'
 WATCHESPN_TIMEZONE = 'US/Eastern'
 
 # User constants, will come from a database for a multiuser model
 USER_TIMEZONE = 'America/Phoenix'
 USER_EMAIL_ADDRESS = 'jwbwater@gmail.com'
-PUSHOVER_USER_KEY = "uHvcDKd7sbqgpdRXdHqfs1KyzTiBpF"
+PUSHOVER_USER_KEY = ""
 
 ################################################################################
 # Functions & Procedures                                                       #
@@ -98,9 +96,10 @@ if __name__ == "__main__":
 
   # setup mail server
   program_name = re.split(r"/",sys.argv[0])[-1]
-  path_to_password_file = sys.argv[0].replace(program_name, PASSWORD_FILE)
-  mailServer = smtpServer(SMTP_SERVER, USER_NAME, path_to_password_file)
-  notificationServer = pushoverApp(PUSHOVER_APP_TOKEN)
+  path_to_credentials_file = sys.argv[0].replace(program_name, CREDENTIALS_FILE)
+  mailServer = smtpServer(SMTP_SERVER, path_to_credentials_file)
+  FROM_ADDRESS = mailServer.get_username() + '@gmail.com'
+  #notificationServer = pushoverApp(PUSHOVER_APP_TOKEN)
 
   # setup regular expression to strip leading zero from day of the month
   leading_zero = re.compile(r"^0")
