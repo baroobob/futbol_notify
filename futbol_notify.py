@@ -126,14 +126,14 @@ if __name__ == "__main__":
       month = todays_date.strftime("%B")
       date = re.sub(leading_zero, "", todays_date.strftime("%d"))
       subject = "Soccer games for " + weekday + ", " + month + " " + date
-      #email_result = mailServer.send_mail(FROM_ADDRESS, USER_EMAIL_ADDRESS,
-      #  subject, message)
-      #log(email_result)
-      notification_result = notificationServer.send_notification(
-        PUSHOVER_USER_KEY, subject + "\n" + message)
-      log(notification_result)
-      #if "Emailed" in email_result:
-      if "Pushed" in notification_result:
+      email_result = mailServer.send_mail(FROM_ADDRESS, USER_EMAIL_ADDRESS,
+        subject, message)
+      log(email_result)
+      #notification_result = notificationServer.send_notification(
+      #  PUSHOVER_USER_KEY, subject + "\n" + message)
+      #log(notification_result)
+      if "Emailed" in email_result:
+      #if "Pushed" in notification_result:
         break
       else:
         # if mail wasn't sent, try again soon
