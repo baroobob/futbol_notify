@@ -18,14 +18,14 @@ class pushoverApp(object):
           "message": message,
         }), { "Content-type": "application/x-www-form-urlencoded" })
       response = conn.getresponse()
-      print(response.status[0])
-      #print(response.getheaders())
-      #print(response.read())
+      #print(response.status)
       #print(response.reason)
-      if response.status == "200":
+      #print(response.read())
+      #print(response.getheaders())
+      if response.status == 200:
         return "Pushed notification to " + userKey + "."
       # 4xx HTTP responses from pushover mean this request will fail every time
-      elif response.status[0] == "4":
+      elif response.status > 400:
         return "Failed to send notification, do not resend."
       else:
         return "Failed to send notification, try again later."
